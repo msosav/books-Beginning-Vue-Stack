@@ -10,9 +10,10 @@ export default class MoviesDAO {
       MoviesDAO.movies = await connection
         .db(process.env.MOVIEREVIEWS_NS)
         .collection("movies");
+      console.log("Connected to MoviesDAO");
     } catch (e) {
       console.error(
-        `Unable to establish a collection handle in moviesDAO: ${e}`,
+        `Unable to establish a collection handle in moviesDAO: ${e}`
       );
     }
   }
@@ -25,9 +26,9 @@ export default class MoviesDAO {
     let query;
     if (filters) {
       if ("title" in filters) {
-        query = { $text: { $search: filters["title"] } };
+        query = { $text: { $search: filters.title } };
       } else if ("rated" in filters) {
-        query = { rated: { $eq: filters["rated"] } };
+        query = { rated: { $eq: filters.rated } };
       }
     }
 
@@ -39,6 +40,7 @@ export default class MoviesDAO {
         .skip(moviesPerPage * page);
       const moviesList = await cursor.toArray();
       const totalNumMovies = await MoviesDAO.movies.countDocuments(query);
+      return { moviesList, totalNumMovies };
     } catch (e) {
       console.error(`Unable to issue find command, ${e}`);
       return { moviesList: [], totalNumMovies: 0 };

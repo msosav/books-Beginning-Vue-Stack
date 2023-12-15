@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import mongodb from "mongodb";
 import MoviesRoute from "./api/MoviesRoute.js";
+import MoviesDAO from "./dao/MoviesDAO.js";
 
 class Index {
   static app = express();
@@ -29,6 +30,7 @@ class Index {
     const port = process.env.PORT || 8000;
     try {
       await client.connect();
+      await MoviesDAO.injectDB(client);
       Index.app.listen(port, () => {
         console.log(`Server is running on port ${port}`);
       });
